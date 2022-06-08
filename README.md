@@ -14,7 +14,7 @@ We need the R package [lubridate](https://lubridate.tidyverse.org) and
 the python module [requests_html](https://pypi.org/project/requests-html/).
 
 Here, just calculating and plotting the test positivity.
-The shaded regions are pointwise 95% confidence intervals.
+The vertical line segments indicate pointwise 95% confidence intervals.
 The source is in [`README.Rmd`](https://github.com/kbroman/UWCovid2021/blob/main/README.Rmd).
 
 
