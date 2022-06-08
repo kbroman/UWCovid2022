@@ -34,17 +34,14 @@ def pad_with_zero(val):
         return str(val)
 
 def reform_date(s):
-    m = re.search("^([A-Za-z]+) (\d+)$", s)
+    m = re.search("^Week of ([A-Za-z]+) (\d+)", s)
     months = ["January", "February", "March", "April", "May", "June",
               "July", "August", "September", "October", "November", "December"]
 
     if m:
         g = m.groups()
         month = pad_with_zero(months.index(g[0])+1)
-        if int(month) < 8:
-            year = '2022'
-        else:
-            year = '2021'
+        year = '2022'
         day = pad_with_zero(g[1])
         return(year + "-" + month + "-" + day)
     else:
