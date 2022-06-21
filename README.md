@@ -3,7 +3,9 @@
 Plot of data from the [UW-Madison COVID
 dashboard](https://covidresponse.wisc.edu/dashboard/)
 after the revisions on 2022-06-06, where data is now just presented as
-weekly counts.
+weekly counts. And then on 2022-06-20, they stopped providing separate
+counts for students and employees, and began to just give totals.
+
 Scraped into [`uw_covid_2022.csv`](uw_covid_2022.csv) using a
 [python script](https://github.com/kbroman/UWCovid2022/blob/main/scrape_data.py)
 based on the

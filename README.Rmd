@@ -3,7 +3,9 @@
 Plot of data from the [UW-Madison COVID
 dashboard](https://covidresponse.wisc.edu/dashboard/)
 after the revisions on 2022-06-06, where data is now just presented as
-weekly counts.
+weekly counts. And then on 2022-06-20, they stopped providing separate
+counts for students and employees, and began to just give totals.
+
 Scraped into [`uw_covid_2022.csv`](uw_covid_2022.csv) using a
 [python script](https://github.com/kbroman/UWCovid2022/blob/main/scrape_data.py)
 based on the
@@ -19,7 +21,7 @@ The source is in [`README.Rmd`](https://github.com/kbroman/UWCovid2021/blob/main
 
 ```{r options, include=FALSE}
 knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE,
-                      fig.path="", fig.width=11, fig.height=14)
+                      fig.path="", fig.width=11, fig.height=6)
 ```
 
 
@@ -27,75 +29,43 @@ knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE,
 x <- read.csv("uw_covid_2022.csv")
 x <- x[x$Date != "2022-05-16",] # drop the week of 2022-05-16, because the data is bogus
 
-tot <- rowSums(x[,2:3])
-pos <- rowSums(x[,4:5])
-x <- cbind(x, Total=tot, Positive=pos)
-x <- cbind(x,
-           percent_employees = x[,4]/x[,2]*100,
-           percent_students = x[,5]/x[,3]*100,
-           percent_overall = x[,7]/x[,6]*100)
+x <- cbind(x, percent=x$Positive/x$Total*100)
 
-x <- cbind(x,
-           week_employees=NA,
-           week_students=NA,
-           week_overall=NA,
-           lo_employees=NA,
-           lo_students=NA,
-           lo_overall=NA,
-           hi_employees=NA,
-           hi_students=NA,
-           hi_overall=NA)
+x <- cbind(x, lo=NA, hi=NA)
 for(i in 1:nrow(x)) {
-    pos <- colSums(x[i,c(4,5,7)])
-    tot <- colSums(x[i,c(2,3,6)])
-    x[i,ncol(x)+(-8:-6)] <- pos/tot*100
-    ci <- lapply(1:3, function(i) {if(!is.na(tot[i]) && tot[i] > 0) return(binom.test(pos[i], tot[i])$conf.int*100) else return(c(NA,NA))})
-    x[i,ncol(x)+(-5:-3)] <- sapply(ci, "[", 1)
-    x[i,ncol(x)+(-2:0)] <- sapply(ci, "[", 2)
+    ci <- binom.test(x[i,"Positive"], x[i, "Total"])$conf.int
+    x[i,"lo"] <- ci[1]*100
+    x[i,"hi"] <- ci[2]*100
 }
 ```
 
 
 
 ```{r bar_plots, dev="svg"}
-light_color <- c(green="#A8DC93", blue="#B3C7E5", red="#F78FA7")
-dark_color <- c(green="#0D8308", blue="#0855B3", red="#C5050C")
-
-cols <- c(8,9,10)
-ave_cols <- c(11,12,13)
-tmpx <- unlist(x[,c(cols, ave_cols)])
-tmpx <- tmpx[tmpx < 80]
-mx <- max(tmpx, na.rm=TRUE)+5
-#mx <- min(c(mx, 25))
-lab <- c("Employees", "Students", "Overall")
+light_color <- c(green="#A8DC93", blue="#B3C7E5", red="#F78FA7")[3]
+dark_color <- c(green="#0D8308", blue="#0855B3", red="#C5050C")[3]
 
 test_date <- as.Date(x[,1])
-mon <- (lubridate::wday(test_date) == 2)
 
-year2022 <- (lubridate::year(test_date) == 2022)
+mx <- max(x[,"hi"])
+par(cex=1.3)
+z <- barplot(x[, "percent"], col=light_color, main="",
+             las=1, ylim=c(0, mx), space=0.02,
+             ylab="Percent Positive", xaxs="i")
+abline(h=pretty(c(0,mx)), lty=2, col="gray60")
 
-par(mfrow=c(3,1), cex=1.3)
-for(i in c(2,1,3)) {
-    z <- barplot(x[, cols[i]], col=light_color[i], main=lab[i],
-                 las=1, ylim=c(0, mx), space=0.02,
-                 ylab="Percent Positive", xaxs="i")
-    abline(h=pretty(c(0,mx)), lty=2, col="gray60")
+u <- par("usr")
+v <- z[,1]
+segments(v, u[3], v, u[3]-diff(u[3:4])*0.04, xpd=TRUE)
+text(v, u[3] - diff(u[3:4])*0.08, x[,1], adj=c(1, 0.5), srt=45, xpd=TRUE, cex=0.8)
 
-    u <- par("usr")
-    v <- z[,1]
-    vv <- v # + diff(v[1:2])*0.3
-    segments(v[mon], u[3], v[mon], u[3]-diff(u[3:4])*0.04, xpd=TRUE)
-    text(vv[mon], u[3] - diff(u[3:4])*0.08, x[mon,1], adj=c(1, 0.5), srt=45, xpd=TRUE, cex=0.8)
+xx <- v
+yy1 <- x[, "lo"]
+yy2 <- x[, "hi"]
+segments(xx, yy1, xx, yy2)
 
-    # 2022
-    xx <- v[year2022]
-    yy1 <- x[year2022, ave_cols[i]+3]
-    yy2 <- x[year2022, ave_cols[i]+6]
-    segments(xx, yy1, xx, yy2)
+d <- 0.02 # half-width of horizontal lines at interval endpoints
 
-    d <- 0.02 # half-width of horizontal lines at interval endpoints
-
-    segments(xx-d, yy1, xx+d, yy1)
-    segments(xx-d, yy2, xx+d, yy2)
-}
+segments(xx-d, yy1, xx+d, yy1)
+segments(xx-d, yy2, xx+d, yy2)
 ```
