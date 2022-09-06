@@ -3,6 +3,7 @@ README.md: README.Rmd uw_covid_2022.csv
 
 uw_covid_2022.csv: scrape_data.py
 	./scrape_data.py
+	R CMD BATCH reformat_data.R
 	grep '^2' uw_covid_2022.csv > tmp
 	cat uw_covid_2022_past.csv tmp > uw_covid_2022.csv
 	rm tmp

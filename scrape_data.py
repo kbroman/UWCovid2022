@@ -20,10 +20,11 @@ def extract_regex(pattern, value):
         return [0]
 
 def extract_numbers(s):
-    # In the format: '93 positive tests' or '853 tests'
+    # In the format: 'Students: 0 positive tests<br>7-day average: 4.9<br><br>Employees: 0 positive tests<br>7-day average: 1.0'
     # But may be missing employees
-    value = extract_regex(r"(\d+) ", s)
-    return value
+    students = extract_regex(r"Students: (\d+) ", s)
+    employees = extract_regex(r"Employees: (\d+) ", s)
+    return students + employees
 
 def pad_with_zero(val):
     val = int(val)
@@ -55,7 +56,7 @@ def extract_data(chart):
 
     tooltips = chart.xpath('//g/@data-tooltip_annotation')
     data = pd.DataFrame([extract_numbers(x) for x in tooltips])
-    data.columns = ['total']
+    data.columns = ['students', 'employees']
 
     return pd.concat([dates_data, data], axis=1)
 
@@ -65,10 +66,10 @@ tests_chart = r.html.find('#chart-covid-tests', first=True)
 positive = extract_data(positive_chart)
 tests = extract_data(tests_chart)
 
-positive.columns = ['Date', 'Positive']
-tests.columns = ['date', 'Total']
-tests = tests[['Total']]
+positive.columns = ['Date', 'Positive_students', 'Positive_employees']
+tests.columns = ['date', 'Total_students', 'Total_employees']
+tests = tests[['Total_students', 'Total_employees']]
 
 data = pd.concat([positive, tests], axis=1)
-data = data[["Date","Total","Positive"]]
+data = data[["Date","Total_employees","Total_students","Positive_employees","Positive_students"]]
 data.to_csv('uw_covid_2022.csv', index=False)
