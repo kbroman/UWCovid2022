@@ -19,6 +19,9 @@ Here, just calculating and plotting the test positivity.
 The vertical line segments indicate pointwise 95% confidence intervals.
 The source is in [`README.Rmd`](https://github.com/kbroman/UWCovid2021/blob/main/README.Rmd).
 
+Note that up to the week of August 15, we were only getting aggregate
+data. Starting the week of August 22, they began releasing separate
+data on students and employees, again.
 
 
 
@@ -26,4 +29,5 @@ The source is in [`README.Rmd`](https://github.com/kbroman/UWCovid2021/blob/main
 
 
 
-![plot of chunk bar_plots](bar_plots-1.svg)
+
+![plot of chunk bar_plots](bar_plots-1.svg)![plot of chunk bar_plots](bar_plots-2.svg)![plot of chunk bar_plots](bar_plots-3.svg)
