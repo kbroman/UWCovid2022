@@ -2,6 +2,8 @@ name: Update data
 
 on:
   push:
+    branches:
+      - main
   schedule:
     - cron: '10 20 * * 1' # mondays at 3:10pm central (8:10pm UTC)
 
@@ -28,13 +30,13 @@ jobs:
       - name: scrape and reformat data
         run: |
           make uw_covid_2022.csv
-      - name: create pluts
+      - name: create plots
         run: |
           make README.md
       - name: Commit new data
         run: |
           git config --local user.name "Update Action"
           git config --local user.email "actions@github.com"
-          git add uwcovid2022.csv README.md *.svg
+          git add uw_covid_2022.csv README.md *.svg
           git commit -m 'Update data and plots' || echo "No changes to commit"
           git push origin || echo "No changes to commit"
