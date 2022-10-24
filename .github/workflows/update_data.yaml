@@ -1,6 +1,7 @@
 name: Update data
 
 on:
+  push:
   schedule:
     - cron: '10 20 * * 1' # mondays at 3:10pm central (8:10pm UTC)
 
