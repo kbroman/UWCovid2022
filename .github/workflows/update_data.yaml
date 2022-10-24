@@ -1,4 +1,4 @@
-name: Update plots
+name: Update data
 
 on:
   schedule:
