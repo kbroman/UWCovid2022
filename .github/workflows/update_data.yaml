@@ -21,6 +21,7 @@ jobs:
       - name: Install needed python packages
         run: |
           pip install requests_html
+          pip install pandas
       - name: remove previous file
         run: |
           make clean

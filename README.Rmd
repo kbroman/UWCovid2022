@@ -13,7 +13,9 @@ based on the
 from [Dan Fitch](https://github.com/dgfitch).
 
 We need the R package [knitr](https://yihui.org/knitr/) and
-the python module [requests_html](https://pypi.org/project/requests-html/).
+the python modules
+[requests_html](https://pypi.org/project/requests-html/)
+and [pandas](https://pypi.org/project/pandas/).
 
 Here, just calculating and plotting the test positivity.
 The vertical line segments indicate pointwise 95% confidence intervals.
