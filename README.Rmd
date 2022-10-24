@@ -12,7 +12,7 @@ based on the
 [gist](https://gist.github.com/dgfitch/b6ca1cc61b4795e698cefdf672a90f23)
 from [Dan Fitch](https://github.com/dgfitch).
 
-We need the R package [lubridate](https://lubridate.tidyverse.org) and
+We need the R package [knitr](https://yihui.org/knitr/) and
 the python module [requests_html](https://pypi.org/project/requests-html/).
 
 Here, just calculating and plotting the test positivity.

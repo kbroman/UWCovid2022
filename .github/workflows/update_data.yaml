@@ -16,7 +16,7 @@ jobs:
           python-version: '3.7'
       - name: Install needed R packages
         run: |
-          R -e "install.packages(c('lubridate', 'knitr'))"
+          R -e "install.packages('knitr')"
       - name: Install needed python packages
         run: |
           pip install requests_html
