@@ -5,26 +5,30 @@ on:
     - cron: '10 20 * * 1' # mondays at 3:10pm central (8:10pm UTC)
 
 jobs:
-  run-r:
-    name: Remove data file and re-scrape data
+  update-data:
+    name: Remove data files and re-scrape data
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - uses: r-lib/actions/setup-r@v2
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.7.13'
       - name: Install needed R packages
         run: |
           R -e "install.packages('knitr')"
-      - name: Install needed python packages
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Detect and install Python dependencies
         run: |
-          pip install requests_html
-          pip install pandas
-      - name: remove previous file
+          pip install pipreqs
+          pipreqs .
+          pip install -r requirements.txt
+
+      - name: Remove old files
         run: |
           make clean
-      - name: scrape and reformat data
+      - name: Scrape and reformat data
         run: |
           make uw_covid_2022.csv
       - name: create plots
