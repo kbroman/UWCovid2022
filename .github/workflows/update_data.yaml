@@ -2,7 +2,7 @@ name: Update data
 
 on:
   schedule:
-    - cron: '10 20 * * 1' # mondays at 3:10pm central (8:10pm UTC)
+    - cron: '10 21 * * 1' # mondays at 3:10pm central (9:10pm UTC)
 
 jobs:
   update-data:
